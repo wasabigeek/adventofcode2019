@@ -5,6 +5,21 @@ from puzzle15 import *
 
 
 class MapTest(unittest.TestCase):
+    def test_oxygenated_positions(self):
+        map = Map()
+        map.objects = {'(0, 2)': map.EMPTY, '(1, 1)': map.OXYGEN}
+
+        self.assertEqual(
+            map.oxygenated_positions,
+            [('(1, 1)', map.OXYGEN)]
+        )
+
+        map.objects = {'(0, 2)': map.OXYGEN, '(1, 1)': map.OXYGEN}
+        self.assertSetEqual(
+            set(map.oxygenated_positions),
+            set([('(1, 1)', map.OXYGEN), ('(0, 2)', map.OXYGEN)])
+        )
+
     def test_deadend(self):
         map = Map()
 

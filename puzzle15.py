@@ -62,6 +62,16 @@ class Map(MutableMapping):
 
         return backtrack
 
+    @property
+    def oxygenated_positions(self):
+        return list(filter(
+            lambda x: x[1] == self.OXYGEN,
+            self.objects.items()
+        ))
+
+    def oxygen_edges(self):
+        pass
+
     def adjacents(self, position):
         "return direction + position"
         adjustments = (
