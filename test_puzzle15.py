@@ -36,6 +36,13 @@ class MapTest(unittest.TestCase):
                 []
             )
 
+        with self.subTest('Negative positions'):
+            map.objects = {'(-1, 1)': map.OXYGEN, '(-1, 2)': map.EMPTY}
+            self.assertEqual(
+                map.oxygen_edges,
+                [(-1, 2)]
+            )
+
         with self.subTest('Oxygen'):
             map.objects = {'(1, 1)': map.OXYGEN, '(1, 2)': map.OXYGEN}
             self.assertEqual(

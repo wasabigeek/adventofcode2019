@@ -72,10 +72,13 @@ class Map(MutableMapping):
 
     @property
     def oxygen_edges(self):
-        # this is a little convoluted because of the data structures >_<
+        # REFACTOR: a graph would potentially make this easier
+        # this is even more convoluted because of my shortcut data structures >_<
         edges = []
         for position_str, _ in self.oxygenated_positions:
-            match = re.compile('\((\d+), (\d+)\)').match(position_str)
+            match = re.compile('\((\-?\d+), (\-?\d+)\)').match(position_str)
+            if not match:
+                print(position_str)
             position = (int(match[1]), int(match[2]))
             adjacents = list(map(
                 lambda p: p[1],
@@ -86,6 +89,21 @@ class Map(MutableMapping):
                 adjacents
             ))
         return edges
+
+    @property
+    def empty_positions(self):
+        return list(filter(
+            lambda x: x[1] == self.EMPTY,
+            self.objects.items()
+        ))
+
+    def time_oxygen_spread(self):
+        count = 1
+        while len(self.empty_positions) > 0:
+            for edge in self.oxygen_edges:
+                self[edge] = self.OXYGEN
+            count += 1
+        return count
 
     def adjacents(self, position):
         "return direction + position"
@@ -278,4 +296,4 @@ if __name__ == '__main__':
     ints = read_intcode('./puzzle15_input.txt')
     droid = RepairDroid(intcode=ints)
     droid.scout_map()
-
+    print(droid.map.time_oxygen_spread())
