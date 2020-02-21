@@ -20,6 +20,30 @@ class MapTest(unittest.TestCase):
             set([('(1, 1)', map.OXYGEN), ('(0, 2)', map.OXYGEN)])
         )
 
+    def test_oxygen_edges(self):
+        map = Map()
+        with self.subTest('Empty adjacents'):
+            map.objects = {'(1, 21)': map.OXYGEN, '(1, 22)': map.EMPTY}
+            self.assertEqual(
+                map.oxygen_edges,
+                [(1, 22)]
+            )
+
+        with self.subTest('Walls'):
+            map.objects = {'(1, 1)': map.OXYGEN, '(1, 2)': map.WALL}
+            self.assertEqual(
+                map.oxygen_edges,
+                []
+            )
+
+        with self.subTest('Oxygen'):
+            map.objects = {'(1, 1)': map.OXYGEN, '(1, 2)': map.OXYGEN}
+            self.assertEqual(
+                map.oxygen_edges,
+                []
+            )
+
+
     def test_deadend(self):
         map = Map()
 
@@ -92,7 +116,7 @@ class RepairDroidTest(unittest.TestCase):
                 {'(0, 0)': Map.EMPTY, '(0, 1)': Map.WALL, '(1, 0)': Map.EMPTY, '(1, 1)': Map.OXYGEN}
             )
 
-    def test_find_oxygen(self):
+    def xtest_find_oxygen(self):
         ints = read_intcode('./puzzle15_input.txt')
         droid = RepairDroid(intcode=ints)
         path = droid.find_oxygen()

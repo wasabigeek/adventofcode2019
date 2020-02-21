@@ -1,6 +1,7 @@
 from collections import MutableMapping
 from random import shuffle
 from time import sleep
+import re
 
 from intcode15plus.computer import Computer, Intcode
 from utils import read_intcode
@@ -69,8 +70,22 @@ class Map(MutableMapping):
             self.objects.items()
         ))
 
+    @property
     def oxygen_edges(self):
-        pass
+        # this is a little convoluted because of the data structures >_<
+        edges = []
+        for position_str, _ in self.oxygenated_positions:
+            match = re.compile('\((\d+), (\d+)\)').match(position_str)
+            position = (int(match[1]), int(match[2]))
+            adjacents = list(map(
+                lambda p: p[1],
+                self.adjacents(position)
+            ))
+            edges += list(filter(
+                lambda p: p in self and self[p] == self.EMPTY,
+                adjacents
+            ))
+        return edges
 
     def adjacents(self, position):
         "return direction + position"
