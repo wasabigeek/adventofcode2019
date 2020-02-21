@@ -77,6 +77,15 @@ class RepairDroidTest(unittest.TestCase):
                 {'(0, 0)': Map.EMPTY, '(0, 1)': Map.WALL, '(1, 0)': Map.EMPTY, '(1, 1)': Map.OXYGEN}
             )
 
+    def test_find_oxygen(self):
+        ints = read_intcode('./puzzle15_input.txt')
+        droid = RepairDroid(intcode=ints)
+        path = droid.find_oxygen()
+        self.assertEqual(
+            len(path),
+            366
+        )
+
 
 if __name__ == '__main__':
     unittest.main()

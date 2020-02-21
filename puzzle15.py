@@ -178,8 +178,7 @@ class RepairDroid:
 
         return self.position, object_in_path
 
-    def scout_map(self):
-        "DFS of adjacent tiles"
+    def scout_map(self, stop_condition=None):
         # second is reverses
         stack = list(map(
             lambda d: (d, False),
@@ -191,14 +190,11 @@ class RepairDroid:
 
         while len(stack) > 0:
             next_direction, is_reversing = stack.pop()
-            # print('next_direction: ', next_direction)
-
-            position, object = droid.attempt_move(next_direction)
-            # moves += 1
+            position, object = self.attempt_move(next_direction)
 
             if object == Map.WALL:
                 continue
-            elif object == Map.OXYGEN:
+            elif stop_condition and stop_condition(object):
                 break
             else:
                 # since droid moves, we need to add the "opposite" movement so the droid eventually backtracks. unless the droid is already backtracking
@@ -214,7 +210,6 @@ class RepairDroid:
 
                     path.append(position)
 
-                # add directions that have not been checked before
                 for direction in self.DIRECTIONS:
                     if self._position_at(direction) in self.map:
                         continue
@@ -224,10 +219,13 @@ class RepairDroid:
                     ))
 
                 prev_position = position
-            # if moves > 2400:
+
         self.map.print(droid_position=self.position, path=path)
 
         return path
+
+    def find_oxygen(self):
+        return self.scout_map(stop_condition=lambda object: object == Map.OXYGEN)
 
     def _run_program(self, direction):
         output =  self.program.execute([direction])
@@ -254,6 +252,5 @@ class RepairDroid:
 if __name__ == '__main__':
     ints = read_intcode('./puzzle15_input.txt')
     droid = RepairDroid(intcode=ints)
-    path = droid.scout_map()
-    print(len(path), len(set(path)))
+    droid.scout_map()
 
