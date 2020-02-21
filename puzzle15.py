@@ -98,11 +98,11 @@ class Map(MutableMapping):
         ))
 
     def time_oxygen_spread(self):
-        count = 1
+        count = 0
         while len(self.empty_positions) > 0:
+            count += 1
             for edge in self.oxygen_edges:
                 self[edge] = self.OXYGEN
-            count += 1
         return count
 
     def adjacents(self, position):

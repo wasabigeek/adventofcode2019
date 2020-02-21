@@ -50,6 +50,35 @@ class MapTest(unittest.TestCase):
                 []
             )
 
+    def test_time_oxygen_spread(self):
+        map = Map()
+        map.objects = {
+            '(1, 0)': map.WALL,
+            '(2, 0)': map.WALL,
+            '(0, -1)': map.WALL,
+            '(1, -1)': map.EMPTY,
+            '(2, -1)': map.EMPTY,
+            '(3, -1)': map.WALL,
+            '(4, -1)': map.WALL,
+            '(0, -2)': map.WALL,
+            '(1, -2)': map.EMPTY,
+            '(2, -2)': map.WALL,
+            '(3, -2)': map.EMPTY,
+            '(4, -2)': map.EMPTY,
+            '(5, -2)': map.WALL,
+            '(0, -3)': map.WALL,
+            '(1, -3)': map.EMPTY,
+            '(2, -3)': map.OXYGEN,
+            '(3, -3)': map.EMPTY,
+            '(4, -3)': map.WALL,
+            '(1, -4)': map.WALL,
+            '(2, -4)': map.WALL,
+            '(3, -4)': map.WALL,
+        }
+        self.assertEqual(
+            map.time_oxygen_spread(),
+            4
+        )
 
     def test_deadend(self):
         map = Map()
