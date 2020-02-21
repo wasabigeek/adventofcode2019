@@ -7,12 +7,12 @@ from puzzle15 import *
 class MapTest(unittest.TestCase):
     def test_deadend(self):
         map = Map()
-        
+
         self.assertEqual(
             map.is_deadend((0, 0)),
             False
         )
-        
+
         map[(1, 0)] = 0
         self.assertEqual(
             map.is_deadend((0, 0)),
@@ -34,7 +34,7 @@ class RepairDroidTest(unittest.TestCase):
         self.assertEqual(droid._position_at(droid.SOUTH), (0, -1))
         self.assertEqual(droid._position_at(droid.EAST), (1, 0))
         self.assertEqual(droid._position_at(droid.WEST), (-1, 0))
-        
+
     def test_find_reverse(self):
         droid = RepairDroid()
         cases = (
@@ -49,16 +49,16 @@ class RepairDroidTest(unittest.TestCase):
                     droid.find_reverse(direction),
                     reverse
                 )
-        
+
     def test_attempt_move(self):
         droid = RepairDroid()
-        
+
         with self.subTest("Hit a wall"):
             droid._run_program = Mock(return_value=0)
             droid.attempt_move(droid.NORTH)
             self.assertEqual(droid.position, (0, 0))
             self.assertEqual(droid.map.objects, {'(0, 0)': Map.EMPTY, '(0, 1)': Map.WALL})
-            
+
         with self.subTest("Valid move"):
             droid._run_program = Mock(return_value=1)
             droid.attempt_move(droid.EAST)
@@ -67,7 +67,7 @@ class RepairDroidTest(unittest.TestCase):
                 droid.map.objects,
                 {'(0, 0)': Map.EMPTY, '(0, 1)': Map.WALL, '(1, 0)': Map.EMPTY}
             )
-            
+
         with self.subTest("Found oxygen"):
             droid._run_program = Mock(return_value=2)
             droid.attempt_move(droid.NORTH)
@@ -76,7 +76,7 @@ class RepairDroidTest(unittest.TestCase):
                 droid.map.objects,
                 {'(0, 0)': Map.EMPTY, '(0, 1)': Map.WALL, '(1, 0)': Map.EMPTY, '(1, 1)': Map.OXYGEN}
             )
-        
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -4,26 +4,26 @@ from time import sleep
 
 from intcode15plus.computer import Computer, Intcode
 from utils import read_intcode
-import console
+# import console
 
 
 class Map(MutableMapping):
     WALL = 0
     EMPTY = 1
     OXYGEN = 2
-    
+
     DISPLAY_OBJ = {
         str(WALL): '|',
         str(EMPTY): ' ',
         str(OXYGEN): 'O'
     }
-    
+
     def __init__(self):
         # this could probably be better done as a tree or graph
         self.objects = {'(0, 0)': 1}
         self.min_x, self.max_x = 0, 0
         self.min_y, self.max_y = 0, 0
-        
+
     def __getitem__(self, key):
         return self.objects[str(key)]
 
@@ -33,35 +33,35 @@ class Map(MutableMapping):
         self.max_x = max(key[0], self.max_x)
         self.min_y = min(key[1], self.min_y)
         self.max_y = max(key[1], self.max_y)
-    
+
     def __delitem__(self, key):
         # edge case: delete changes the min/max
         self.objects.pop(str(key))
-            
+
     def __len__(self):
         return len(self.objects)
-        
+
     def __iter__(self):
         return (
             k for k, _ in self.objects.items()
         )
-        
+
     def __contains__(self, key):
         return self._key_for(key) in self.objects
-        
+
     def _key_for(self, key):
         return str(key)
 
-    @classmethod   
+    @classmethod
     def find_reverse(cls, direction):
         backtrack = direction
         if direction % 2 == 0:
             backtrack -= 1
         else:
             backtrack += 1
-            
+
         return backtrack
-        
+
     def adjacents(self, position):
         "return direction + position"
         adjustments = (
@@ -75,13 +75,13 @@ class Map(MutableMapping):
                 direction, (adj[0] + position[0], adj[1] + position[1])
             ) for direction, adj in adjustments
         ]
-        
+
     def is_deadend(self, position):
         return len(list(filter(
             lambda x: (x[1] in self and self[x[1]] == self.WALL),
             self.adjacents(position)
         ))) == 3
-        
+
     def print(self, droid_position, path):
         # sleep(0.5)
         # console.clear()
@@ -102,21 +102,21 @@ class Map(MutableMapping):
                     rep = self.DISPLAY_OBJ[str(rep)]
                 print(rep, end='')
             print()
-            
+
         # for k in :
         #    print(k, self.objects[k])
 
-    
+
 class Tile:
     NEW = 0
     PATH = 1
     BLACKLISTED = -1
-    
+
     def __init__(self, position, object, state=NEW):
         self.position = position
         self.object = object
         self.state = state
-    
+
     @property
     def adjacent_positions(self):
         "return direction + position"
@@ -133,7 +133,7 @@ class Tile:
             ),
             adjustments
         ))
-        
+
 
 class RepairDroid:
     NORTH = 1
@@ -158,13 +158,13 @@ class RepairDroid:
             backtrack -= 1
         else:
             backtrack += 1
-            
+
         return backtrack
-        
+
     def attempt_move(self, direction):
         object_in_path = self._run_program(direction)
         attempted_position = self._position_at(direction)
-        
+
         self.map[attempted_position] = object_in_path
 
         if object_in_path == Map.WALL:
@@ -175,9 +175,9 @@ class RepairDroid:
             self.position = attempted_position
         else:
             raise Exception(f"Invalid object {object_in_path}")
-            
+
         return self.position, object_in_path
-    
+
     def scout_map(self):
         "DFS of adjacent tiles"
         # second is reverses
@@ -188,7 +188,7 @@ class RepairDroid:
         path = [self.position]
         prev_command = None
         prev_position = self.position
-            
+
         while len(stack) > 0:
             next_direction, is_reversing = stack.pop()
             # print('next_direction: ', next_direction)
@@ -200,7 +200,7 @@ class RepairDroid:
                 continue
             elif object == Map.OXYGEN:
                 break
-            else:       
+            else:
                 # since droid moves, we need to add the "opposite" movement so the droid eventually backtracks. unless the droid is already backtracking
                 # this doesn't work if the droid has already crosses
                 if is_reversing:
@@ -211,7 +211,7 @@ class RepairDroid:
                         self.find_reverse(next_direction),
                         True
                     ))
-  
+
                     path.append(position)
 
                 # add directions that have not been checked before
@@ -226,7 +226,7 @@ class RepairDroid:
                 prev_position = position
             # if moves > 2400:
         self.map.print(droid_position=self.position, path=path)
-        
+
         return path
 
     def _run_program(self, direction):
@@ -235,7 +235,7 @@ class RepairDroid:
         object_in_path, *other_outputs = output
         if len(other_outputs) > 0:
             raise Exception(f"Unexpected outputs: {other_outputs}")
-        
+
         return object_in_path
 
     def _position_at(self, direction):
